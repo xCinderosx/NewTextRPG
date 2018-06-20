@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8f215305b9c93f4eaa8c77e9b1e18c9, type: 3}
+  m_Name: LanguagePL
+  m_EditorClassIdentifier: 
+  LanguageName: Polski
+  LocalizationTexts:
+  - Nowa Gra
+  - Opcje
+  - "Wyj\u015Bcie"
+  - 'Opcje:'
+  - "J\u0119zyk:"
+  - Wstecz
+  - Nowe Tekstowe RPG
+  - Kontynuuj
+  - "Wczytaj Gr\u0119"
+  - "Zapisz Gr\u0119"

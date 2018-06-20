@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3885a88eff20dcc43bd86f09678fbe61
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - CurrentLanguage: {fileID: 11400000, guid: fb43e9f5784dbd84886ef1a5a678ae4c, type: 2}
+  - canvasOptions: {instanceID: 0}
+  - NewGamebutton: {instanceID: 0}
+  - Optionbutton: {instanceID: 0}
+  - Exitbutton: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
