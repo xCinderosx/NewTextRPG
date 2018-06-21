@@ -8,16 +8,16 @@ public class CameraScript : MonoBehaviour
     public Transform CameraNestTransform;
     private Vector3 CameraNormalPos;
     private Vector3 CameraAttackPos;
-    string CurrentCameraMode;
+    [SerializeField] private string CurrentCameraMode;
     private Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     RaycastHit hit;
-    public float AttackCameraSpeed = 0.1f;
+    public float AttackCameraSpeed = 1f;
     public bool UnderAttack = false;
     void Awake()
     {
         CameraNormalPos = camera.transform.position;
         CameraAttackPos = camera.transform.position + new Vector3(0, -1.72f, -1.03f);
-
+        CurrentCameraMode = "Normal";
     }
 
     // Use this for initialization
@@ -36,19 +36,21 @@ public class CameraScript : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Mouse1) && !UnderAttack)
         {
-            
-            CameraNestTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X")*Time.deltaTime*10, 0).normalized);
-            camera.transform.Rotate(-Input.GetAxis("Mouse Y"), 0, 0);
+            Mathf.Clamp(camera.transform.rotation.x, 30f, 75f);
+            CameraNestTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X")*Time.deltaTime, 0).normalized);
+            camera.transform.Rotate(new Vector3(-Input.GetAxis("Mouse Y")*Time.deltaTime*50, 0, 0).normalized);
         }
 
-        if (UnderAttack && CurrentCameraMode == "Normal")
+        if (UnderAttack && CurrentCameraMode != "Fight")
         {
+            Debug.Log("HI");
             CameraPosition(1);
             CurrentCameraMode = "Fight";
         }
 
-        if (!UnderAttack && CurrentCameraMode == "Fight")
+        if (!UnderAttack && CurrentCameraMode != "Normal")
         {
+            Debug.Log("HI2");
             CameraPosition(0);
             CurrentCameraMode = "Normal";
         }
@@ -57,27 +59,38 @@ public class CameraScript : MonoBehaviour
 
     void CameraPosition(int CameraMode)
     {
-
         switch (CameraMode)
         {
             default:
                 break;
             case 0:
-                camera.transform.position = Vector3.Lerp(camera.transform.position, camera.transform.position - CameraAttackPos, Time.time * AttackCameraSpeed);
+                Debug.Log("NormalCameraMode_ON");
+                Mathf.Clamp(camera.transform.rotation.x, 30f, 75f);
+                camera.transform.position = Vector3.Lerp(camera.transform.position, camera.transform.position - CameraAttackPos, Time.time * AttackCameraSpeed).normalized;
                 break;
             case 1:
-                camera.transform.position = Vector3.Lerp(camera.transform.position, camera.transform.position + CameraAttackPos, Time.time * AttackCameraSpeed);
+                Debug.Log("HI1");
+                camera.transform.position = Vector3.Lerp(camera.transform.position, camera.transform.position + CameraAttackPos, Time.time * AttackCameraSpeed).normalized;
                 break;
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        UnderAttack = true;
+        
+        if (other.tag == "enemy")
+        {
+            UnderAttack = true;
+        }
+        
     }
     private void OnTriggerExit(Collider other)
     {
-        Flee();
+        if (other.tag == "enemy")
+        {
+            Flee();
+        }
+        
     }
     // co jeszcze potrzebuje? ustawic pewnie kolider dla walki 
     IEnumerator Flee()
