@@ -4,13 +4,9 @@ using UnityEngine;
 
 public class CameraScript_1 : MonoBehaviour
 {
-
-   
-    Quaternion fixedRotation;
-
+    
     void Awake()
     {
-        fixedRotation = transform.rotation;
 
     }
 
@@ -24,18 +20,7 @@ public class CameraScript_1 : MonoBehaviour
     void Update()
     {
         
-        transform.rotation = fixedRotation;
-        /*float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-
-        if (Input.GetMouseButton(1))
-        {
-            
-            float xPos = h * range;
-            float yPos = v * range;
-            transform.Rotate(xPos, yPos, 0);
-        }
-        */
+       
 
     }
 }
