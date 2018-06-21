@@ -37,6 +37,7 @@ public class CameraScript : MonoBehaviour
         if (Input.GetKey(KeyCode.Mouse1) && !UnderAttack)
         {
             Mathf.Clamp(camera.transform.rotation.x, 30f, 75f);
+            //Camera.main.rig
             CameraNestTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X")*Time.deltaTime, 0).normalized);
             camera.transform.Rotate(new Vector3(-Input.GetAxis("Mouse Y")*Time.deltaTime*50, 0, 0).normalized);
         }
