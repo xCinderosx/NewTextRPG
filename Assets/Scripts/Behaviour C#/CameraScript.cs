@@ -9,10 +9,10 @@ public class CameraScript : MonoBehaviour
     private Vector3 CameraNormalPos;
     private Vector3 CameraAttackPos;
     [SerializeField] private string CurrentCameraMode;
-    private Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    private Ray ray;
     RaycastHit hit;
-    public float AttackCameraSpeed = 1f;
-    public bool UnderAttack = false;
+    public float AttackCameraSpeed;
+    public bool UnderAttack = false, DebugMode = false;
     void Awake()
     {
         CameraNormalPos = camera.transform.position;
@@ -24,15 +24,35 @@ public class CameraScript : MonoBehaviour
     void Start()
     {
         //CameraOffset = new Vector3(0.36f, 4.33f, -2.32f);
+        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        AttackCameraSpeed = 1f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Physics.Raycast(ray, out hit);
+        /*Physics.Raycast(ray, out hit);
         Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red);
-        CameraNestTransform.transform.position = this.transform.position;
-        //camera.transform.LookAt(hit.point);
+        
+        camera.transform.LookAt(hit.point);*/
+        if (!DebugMode)
+        {
+            CameraNestTransform.transform.position = this.transform.position;
+        }
+        
+        if (Input.GetKeyDown(KeyCode.F12))
+        {
+            if (!DebugMode)
+            {
+                DebugMode = true;
+            }
+            else if (DebugMode)
+            {
+                DebugMode = false;
+            }
+            
+        }
+
 
         if (Input.GetKey(KeyCode.Mouse1) && !UnderAttack)
         {
@@ -70,8 +90,11 @@ public class CameraScript : MonoBehaviour
                 camera.transform.position = Vector3.Lerp(camera.transform.position, camera.transform.position - CameraAttackPos, Time.time * AttackCameraSpeed).normalized;
                 break;
             case 1:
-                Debug.Log("HI1");
+                Debug.Log("FightCameraMode_ON");
                 camera.transform.position = Vector3.Lerp(camera.transform.position, camera.transform.position + CameraAttackPos, Time.time * AttackCameraSpeed).normalized;
+                break;
+            case 9:
+                Debug.Log("DebugFreeCameraMode_ON");
                 break;
         }
     }
@@ -89,7 +112,7 @@ public class CameraScript : MonoBehaviour
     {
         if (other.tag == "enemy")
         {
-            Flee();
+            StartCoroutine("Flee");
         }
         
     }
