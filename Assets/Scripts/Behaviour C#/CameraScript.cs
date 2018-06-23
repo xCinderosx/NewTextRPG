@@ -7,6 +7,7 @@ public class CameraScript : MonoBehaviour
     public GameObject camera;
     public Transform CameraNestTransform, CameraNormalPos, CameraAttackPos, CurrentTarget;
     private Ray ray;
+    Vector3 Rayhit;
     [SerializeField] private Quaternion OldCameraRotation, oldCameraNestTransformRotation;
     RaycastHit hit;
     [SerializeField] private List<Transform> TargetsList;
@@ -14,10 +15,15 @@ public class CameraScript : MonoBehaviour
     [SerializeField] private string CurrentCameraMode;
     [SerializeField] public bool UnderAttack = false, DebugMode = false;
 
+    private void OnGUI()
+    {
+        
+    }
 
     void Awake()
     {
         CurrentCameraMode = "Normal";
+
     }
 
 
@@ -25,6 +31,7 @@ public class CameraScript : MonoBehaviour
     {
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         CameraTransitionSpeed = 1.5f;
+        Rayhit = camera.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(0.5f, 0.5f, camera.GetComponent<Camera>().nearClipPlane));
     }
 
 
@@ -47,14 +54,26 @@ public class CameraScript : MonoBehaviour
             }
             
         }
-
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            OldCameraRotation.x = camera.transform.rotation.x;
+        }
 
         if (Input.GetKey(KeyCode.Mouse1) && !UnderAttack)
         {
+            
             Mathf.Clamp(camera.transform.rotation.x, 30f, 75f);
             //Camera.main.rig
             CameraNestTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X")*Time.deltaTime, 0).normalized);
             camera.transform.Rotate(new Vector3(-Input.GetAxis("Mouse Y")*0.5f * Time.deltaTime, 0, 0).normalized);
+
+            
+            Mathf.Clamp(camera.transform.rotation.x, 30f, 75f);
+        }
+
+        if (Input.GetKeyUp(KeyCode.Mouse1))
+        {
+            camera.transform.rotation = new Quaternion(OldCameraRotation.x, 0, 0, 0);
         }
 
         if (TargetsList.Count != 0)
@@ -103,15 +122,21 @@ public class CameraScript : MonoBehaviour
                 break;
 
             case 1:
-                CurrentTarget = TargetsList[0];
-                StartCoroutine(CameraTransitionTo(CameraAttackPos, CameraTransitionSpeed));
-                StartCoroutine(CameraFaceAt(CurrentTarget, CameraTransitionSpeed)); //WIP
-                OldCameraRotation = camera.transform.rotation;
-                
-                //camera.transform.LookAt(TargetsList[0]);
+                if (Physics.Raycast(camera.transform.position, Rayhit, out hit, 100))
+                {
+                    if (hit.collider.tag == "Enemy")
+                    {
+                        CurrentTarget = TargetsList[0];
+                        StartCoroutine(CameraTransitionTo(CameraAttackPos, CameraTransitionSpeed));
+                        StartCoroutine(CameraFaceAt(CurrentTarget, CameraTransitionSpeed)); //WIP
+                        OldCameraRotation = camera.transform.rotation;
 
-                Debug.Log("FightCameraMode_ON");
-                CurrentCameraMode = "Fight";
+                        //camera.transform.LookAt(TargetsList[0]);
+
+                        Debug.Log("FightCameraMode_ON");
+                        CurrentCameraMode = "Fight";
+                    }
+                }
                 break;
 
             case 9:
