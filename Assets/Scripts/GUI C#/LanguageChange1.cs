@@ -6,7 +6,7 @@ using System.Linq;
 
 public class LanguageChange1 : MonoBehaviour {
     
-    public LanguagesTexts CurrentLanguageMENU;
+    public LanguagesTexts CurrentLanguageMENU, DefaultLanguage;
 
     public List<Text> textsList;
 
@@ -23,12 +23,18 @@ public class LanguageChange1 : MonoBehaviour {
 
     private void Awake()
     {
+        if (LanguageChange.CurrentLanguage == null)
+        {
+            LanguageChange.CurrentLanguage = DefaultLanguage;
+        }
         CurrentLanguageMENU = LanguageChange.CurrentLanguage;
-        ChangeLanguage();
+        
+        
     }
 
     // Use this for initialization
     void Start () {
+        ChangeLanguage();
     }
 
     public void ChangeLanguage()

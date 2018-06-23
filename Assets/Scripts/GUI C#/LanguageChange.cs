@@ -8,7 +8,7 @@ public class LanguageChange : MonoBehaviour {
 
     public Dropdown LanguageMenu;
     public List<LanguagesTexts> LanguageList;
-    public static LanguagesTexts CurrentLanguage;
+    [SerializeField] public static LanguagesTexts CurrentLanguage;
 
     public List<Text> textsList;
 
