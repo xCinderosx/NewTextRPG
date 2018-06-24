@@ -4,44 +4,44 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
-    public GameObject camera;
+    public GameObject PlayerCamera;
     public Transform CameraNestTransform, CameraNormalPos, CameraAttackPos, CurrentTarget;
+    public Collider CameraCollider;
     private Ray ray;
     Vector3 Rayhit;
-    [SerializeField] private Quaternion OldCameraRotation, oldCameraNestTransformRotation;
-    RaycastHit hit;
-    [SerializeField] private List<Transform> TargetsList;
+    [SerializeField] private Vector3 OldCameraRotation, OldCameraNestTransformRotation;
+    [SerializeField] private List<Transform> TargetsList = new List<Transform>();
     [SerializeField] private float CameraTransitionSpeed;
     [SerializeField] private string CurrentCameraMode;
-    [SerializeField] public bool UnderAttack = false, DebugMode = false;
+    [SerializeField] public bool UnderAttack, DebugMode = false, CheckTimerTrigger = false, ReadyToUpdate = true;
+
+    [SerializeField] private float FleeDuration = 3f;
+    float Timer;
 
     private void OnGUI()
     {
-        
+
     }
 
     void Awake()
     {
         CurrentCameraMode = "Normal";
-
     }
-
-
+    
     void Start()
     {
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         CameraTransitionSpeed = 1.5f;
-        Rayhit = camera.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(0.5f, 0.5f, camera.GetComponent<Camera>().nearClipPlane));
+        Rayhit = PlayerCamera.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(0.5f, 0.5f, PlayerCamera.GetComponent<Camera>().nearClipPlane));
     }
-
-
+    
     void Update()
     {
-        if (!DebugMode)
+        if (!DebugMode && UnderAttack == false)
         {
-            CameraNestTransform.transform.position = this.transform.position;
+            CameraNestTransform.transform.position = transform.position;
         }
-        
+
         if (Input.GetKeyDown(KeyCode.F12))
         {
             if (!DebugMode)
@@ -52,91 +52,87 @@ public class CameraScript : MonoBehaviour
             {
                 DebugMode = false;
             }
-            
-        }
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            OldCameraRotation.x = camera.transform.rotation.x;
         }
 
-        if (Input.GetKey(KeyCode.Mouse1) && !UnderAttack)
+        if (Input.GetButton("Fire2") && UnderAttack == false)
         {
-            
-            Mathf.Clamp(camera.transform.rotation.x, 30f, 75f);
-            //Camera.main.rig
-            CameraNestTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X")*Time.deltaTime, 0).normalized);
-            camera.transform.Rotate(new Vector3(-Input.GetAxis("Mouse Y")*0.5f * Time.deltaTime, 0, 0).normalized);
-
-            
-            Mathf.Clamp(camera.transform.rotation.x, 30f, 75f);
-        }
-
-        if (Input.GetKeyUp(KeyCode.Mouse1))
-        {
-            camera.transform.rotation = new Quaternion(OldCameraRotation.x, 0, 0, 0);
-        }
-
-        if (TargetsList.Count != 0)
-        {
-            UnderAttack = true;
+            CameraNestTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * 2f * Time.deltaTime, 0).normalized, Space.World);
+            CameraNestTransform.Rotate(new Vector3(-Input.GetAxis("Mouse Y") * 0.5f * Time.deltaTime, 0, 0).normalized);
         }
         
+        if (TargetsList.Count > 0)
+        {
+            Vector3 CurrentNestPoint = CalculateEnemiesAveragePosition(TargetsList);
+            Debug.Log(CalculateEnemiesAveragePosition(TargetsList));
+            if (ReadyToUpdate)
+            {
+                //UpdateCameraPosition(CurrentNestPoint);
+            }
+            CurrentTarget = TargetsList[0];
+            UnderAttack = true;
+        }
+
+        if (CheckTimerTrigger)
+        {
+            CheckTimer();
+        }
+    }
+
+    /*void UpdateCameraPosition(Vector3 NewNestPos)
+    {
+        float elapsedTime = 0;
+        var OldNestPos = CameraNestTransform.position;
+
+        while (elapsedTime < 0.7f)
+        {
+            CameraNestTransform.transform.position = Vector3.Lerp(OldNestPos, NewNestPos, elapsedTime / 0.7f);
+
+            elapsedTime += Time.deltaTime;
+        }
+        ReadyToUpdate = true;
+    } */
+
+    void CheckTimer()
+    {
+        if (Timer <= Time.time)
+        {
+            Debug.Log("Checking Timer: " + Timer);
+            UnderAttack = false;
+            CheckTimerTrigger = false;
+        }
     }
 
     private void LateUpdate()
     {
         if (UnderAttack && CurrentCameraMode != "Fight")
         {
-            //Debug.Log("HI");
             CameraPosition(1);
         }
-        
-        if (!UnderAttack && CurrentCameraMode != "Normal")
+
+        if (UnderAttack == false && CurrentCameraMode != "Normal")
         {
-            //Debug.Log("HI2");
             CameraPosition(0);
         }
     }
 
     void CameraPosition(int CameraMode)
     {
-        
         switch (CameraMode)
         {
             default:
                 break;
+
             case 0:
-                //Mathf.Clamp(camera.transform.rotation.x, 30f, 75f);
-                StartCoroutine(CameraTransitionTo(CameraNormalPos, CameraTransitionSpeed));
+                StartCoroutine(CameraTransitionTo(CameraTransitionSpeed));
                 CurrentTarget = null;
-                if (OldCameraRotation != null)
-                {
-                    camera.transform.rotation = OldCameraRotation;
-                }
-                if (oldCameraNestTransformRotation != null)
-                {
-                    CameraNestTransform.rotation = oldCameraNestTransformRotation;
-                }
                 Debug.Log("NormalCameraMode_ON");
                 CurrentCameraMode = "Normal";
                 break;
 
             case 1:
-                if (Physics.Raycast(camera.transform.position, Rayhit, out hit, 100))
-                {
-                    if (hit.collider.tag == "Enemy")
-                    {
-                        CurrentTarget = TargetsList[0];
-                        StartCoroutine(CameraTransitionTo(CameraAttackPos, CameraTransitionSpeed));
-                        StartCoroutine(CameraFaceAt(CurrentTarget, CameraTransitionSpeed)); //WIP
-                        OldCameraRotation = camera.transform.rotation;
-
-                        //camera.transform.LookAt(TargetsList[0]);
-
-                        Debug.Log("FightCameraMode_ON");
-                        CurrentCameraMode = "Fight";
-                    }
-                }
+                StartCoroutine(CameraCombatTransitionTo(CameraTransitionSpeed));
+                Debug.Log("FightCameraMode_ON");
+                CurrentCameraMode = "Fight";
                 break;
 
             case 9:
@@ -150,73 +146,74 @@ public class CameraScript : MonoBehaviour
         /*Debug.Log(other.name + " have entered combat trigger, and his tag is: " + other.tag);*/
         if (other.tag == "Enemy")
         {
-            TargetsList.Add(other.transform);
-            UnderAttack = true;
+            if (TargetsList.Contains(other.transform) == false)
+            {
+                TargetsList.Add(other.transform);
+            }
         }
-        
     }
+
     private void OnTriggerExit(Collider other)
     {
         if (other.tag == "Enemy")
         {
             TargetsList.Remove(other.transform);
-            StartCoroutine("Flee");
+
+            if (TargetsList.Count == 0)
+            {
+                Timer = Time.time + FleeDuration;
+                CheckTimerTrigger = true;
+            }
         }
+    }
+
+    IEnumerator CameraTransitionTo(float time)
+    {
+        float elapsedTime = 0;
+
+        Vector3 StartingCameraPosition = PlayerCamera.transform.position;
         
-    }
-    IEnumerator Flee()
-    {
-        // suspend execution for 5 seconds
-        UnderAttack = false;
-        yield return new WaitForSeconds(5);
-    }
-
-    IEnumerator CameraTransitionTo(Transform CameraTarget, float time)
-    {
-        float elapsedTime = 0;
-
-        Vector3 startingPos = camera.transform.position;
-
         while (elapsedTime < time)
-
         {
-
-            camera.transform.position = Vector3.Lerp(startingPos, CameraTarget.position, elapsedTime / time);
-
-            elapsedTime += Time.deltaTime;
-
-            yield return null;
-
-        }
-    }
-
-    IEnumerator CameraFaceAt(Transform Target, float time)
-
-    {
-
-        float elapsedTime = 0;
-
-        OldCameraRotation = camera.transform.rotation;
-        oldCameraNestTransformRotation = CameraNestTransform.rotation;
-
-        while (elapsedTime < time)
-
-        {
-            camera.transform.localRotation = new Quaternion(camera.transform.rotation.x, 0, 0, 0);
-            CameraNestTransform.localRotation = new Quaternion(0, CameraNestTransform.transform.rotation.y, 0, 0);
-            var newRot = Quaternion.LookRotation(Target.position - camera.transform.position);
-            camera.transform.rotation = Quaternion.Lerp(OldCameraRotation, newRot, time);
-            CameraNestTransform.rotation = Quaternion.Lerp(oldCameraNestTransformRotation, newRot, time);
-            elapsedTime += Time.deltaTime;
-            /////////////////////////////////////////////////////
-            //camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, 0, 0);
-            //CameraNestTransform.localEulerAngles = new Vector3(0, CameraNestTransform.localEulerAngles.y, 0);
+            ReadyToUpdate = false;
+            PlayerCamera.transform.position = Vector3.Lerp(StartingCameraPosition, CameraNormalPos.position, elapsedTime / time);
             
+            elapsedTime += Time.deltaTime;
 
             yield return null;
-
         }
-
     }
 
+    IEnumerator CameraCombatTransitionTo(float time)
+    {
+        float elapsedTime = 0;
+        Vector3 StartingCameraPosition = PlayerCamera.transform.position;
+        Vector3 AverageEnemyPosition = CalculateEnemiesAveragePosition(TargetsList);
+
+        while (elapsedTime < time)
+        {
+            ReadyToUpdate = false;
+            CameraNestTransform.position = Vector3.Lerp(CameraNestTransform.position, AverageEnemyPosition, elapsedTime / time);
+
+            PlayerCamera.transform.position = Vector3.Lerp(StartingCameraPosition, CameraAttackPos.position, elapsedTime / time);
+
+            elapsedTime += Time.deltaTime;
+            
+            yield return null;
+        }
+        ReadyToUpdate = true;
+    }
+
+    Vector3 CalculateEnemiesAveragePosition(List<Transform> Targets)
+    {
+        Vector3 AveragePoint = Vector3.zero;
+        Vector3 result;
+        foreach (Transform Target in Targets)
+        {
+            AveragePoint += Target.position;
+        }
+        AveragePoint += GetComponentInParent<Transform>().position;
+        result = AveragePoint / (Targets.Count + 1);
+        return result;
+    }
 }
