@@ -13,9 +13,9 @@ public class CameraScript : MonoBehaviour
     [SerializeField] private List<Transform> TargetsList = new List<Transform>();
     [SerializeField] private float CameraTransitionSpeed;
     [SerializeField] private string CurrentCameraMode;
-    [SerializeField] public bool UnderAttack, DebugMode = false, CheckTimerTrigger = false, ReadyToUpdate = true;
-
-    [SerializeField] private float FleeDuration = 3f;
+    [SerializeField] public bool UnderAttack, DebugMode = false, CheckTimerTrigger = false;
+    [SerializeField] private bool ReadyToUpdate = true;
+    [SerializeField] private float FleeDuration = 0.5f;
     float Timer;
 
     private void OnGUI()
@@ -31,13 +31,13 @@ public class CameraScript : MonoBehaviour
     void Start()
     {
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        CameraTransitionSpeed = 1.5f;
+        CameraTransitionSpeed = 1f;
         Rayhit = PlayerCamera.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(0.5f, 0.5f, PlayerCamera.GetComponent<Camera>().nearClipPlane));
     }
     
     void Update()
     {
-        if (!DebugMode && UnderAttack == false)
+        if (CurrentCameraMode == "Normal")
         {
             CameraNestTransform.transform.position = transform.position;
         }
@@ -47,6 +47,7 @@ public class CameraScript : MonoBehaviour
             if (!DebugMode)
             {
                 DebugMode = true;
+                CameraPosition(9);
             }
             else if (DebugMode)
             {
@@ -56,20 +57,27 @@ public class CameraScript : MonoBehaviour
 
         if (Input.GetButton("Fire2") && UnderAttack == false)
         {
-            CameraNestTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * 2f * Time.deltaTime, 0).normalized, Space.World);
+            CameraNestTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * 5f * Time.deltaTime, 0).normalized, Space.World);
             CameraNestTransform.Rotate(new Vector3(-Input.GetAxis("Mouse Y") * 0.5f * Time.deltaTime, 0, 0).normalized);
         }
         
         if (TargetsList.Count > 0)
         {
-            Vector3 CurrentNestPoint = CalculateEnemiesAveragePosition(TargetsList);
-            Debug.Log(CalculateEnemiesAveragePosition(TargetsList));
-            if (ReadyToUpdate)
-            {
-                //UpdateCameraPosition(CurrentNestPoint);
-            }
             CurrentTarget = TargetsList[0];
             UnderAttack = true;
+            var OldSize = TargetsList.Count;
+            if (TargetsList.Count != OldSize)
+            {
+                StopCoroutine("UpdateCameraPosition");
+                StopCoroutine("CameraTransitionTo");
+
+                OldSize = TargetsList.Count;
+            }
+        }
+        else
+        {
+            StopCoroutine("CameraCombatTransitionTo");
+            StopCoroutine("UpdateCameraPosition");
         }
 
         if (CheckTimerTrigger)
@@ -78,40 +86,30 @@ public class CameraScript : MonoBehaviour
         }
     }
 
-    /*void UpdateCameraPosition(Vector3 NewNestPos)
-    {
-        float elapsedTime = 0;
-        var OldNestPos = CameraNestTransform.position;
-
-        while (elapsedTime < 0.7f)
-        {
-            CameraNestTransform.transform.position = Vector3.Lerp(OldNestPos, NewNestPos, elapsedTime / 0.7f);
-
-            elapsedTime += Time.deltaTime;
-        }
-        ReadyToUpdate = true;
-    } */
-
-    void CheckTimer()
-    {
-        if (Timer <= Time.time)
-        {
-            Debug.Log("Checking Timer: " + Timer);
-            UnderAttack = false;
-            CheckTimerTrigger = false;
-        }
-    }
-
     private void LateUpdate()
     {
-        if (UnderAttack && CurrentCameraMode != "Fight")
-        {
-            CameraPosition(1);
-        }
 
         if (UnderAttack == false && CurrentCameraMode != "Normal")
         {
             CameraPosition(0);
+        }
+
+        if (UnderAttack && CurrentCameraMode != "Fight")
+        {
+            CameraPosition(1);
+        }
+        else if (UnderAttack && ReadyToUpdate)
+        {
+            CameraPosition(2);
+        }
+    }
+    
+    void CheckTimer()
+    {
+        if (Timer <= Time.time)
+        {
+            UnderAttack = false;
+            CheckTimerTrigger = false;
         }
     }
 
@@ -131,12 +129,20 @@ public class CameraScript : MonoBehaviour
 
             case 1:
                 StartCoroutine(CameraCombatTransitionTo(CameraTransitionSpeed));
-                Debug.Log("FightCameraMode_ON");
+                Debug.Log("FightCameraMode_Switch");
                 CurrentCameraMode = "Fight";
+                break;
+
+            case 2:
+                Vector3 CurrentNestPoint = CalculateEnemiesAveragePosition(TargetsList);
+                StartCoroutine(UpdateCameraPositionTo(CurrentNestPoint));
+                CurrentCameraMode = "FloatyCamera";
+                Debug.Log("FightCameraMode_ON");
                 break;
 
             case 9:
                 Debug.Log("DebugFreeCameraMode_ON");
+                CurrentCameraMode = "DebugCamera";
                 break;
         }
     }
@@ -193,12 +199,27 @@ public class CameraScript : MonoBehaviour
         while (elapsedTime < time)
         {
             ReadyToUpdate = false;
-            CameraNestTransform.position = Vector3.Lerp(CameraNestTransform.position, AverageEnemyPosition, elapsedTime / time);
+            //CameraNestTransform.position = Vector3.Lerp(CameraNestTransform.position, AverageEnemyPosition, elapsedTime / time);
 
             PlayerCamera.transform.position = Vector3.Lerp(StartingCameraPosition, CameraAttackPos.position, elapsedTime / time);
 
             elapsedTime += Time.deltaTime;
             
+            yield return null;
+        }
+        ReadyToUpdate = true;
+    }
+
+    IEnumerator UpdateCameraPositionTo(Vector3 NewNestPos)
+    {
+        float elapsedTime = 0;
+        var OldNestPos = CameraNestTransform.position;
+        ReadyToUpdate = false;
+        while (elapsedTime < 0.3f)
+        {
+            CameraNestTransform.transform.position = Vector3.Lerp(OldNestPos, NewNestPos, elapsedTime / 0.3f);
+
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
         ReadyToUpdate = true;
