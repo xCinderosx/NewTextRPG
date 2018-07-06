@@ -16,6 +16,8 @@ public class CameraScript : MonoBehaviour
     [SerializeField] public bool UnderAttack, DebugMode = false, CheckTimerTrigger = false;
     [SerializeField] private bool ReadyToUpdate = true;
     [SerializeField] private float FleeDuration = 0.5f;
+    private int oldEnemies;
+
     float Timer;
 
     private void OnGUI()
@@ -27,14 +29,14 @@ public class CameraScript : MonoBehaviour
     {
         CurrentCameraMode = "Normal";
     }
-    
+
     void Start()
     {
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        CameraTransitionSpeed = 1f;
+        CameraTransitionSpeed = 0.2f;
         Rayhit = PlayerCamera.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(0.5f, 0.5f, PlayerCamera.GetComponent<Camera>().nearClipPlane));
     }
-    
+
     void Update()
     {
         if (CurrentCameraMode == "Normal")
@@ -60,18 +62,17 @@ public class CameraScript : MonoBehaviour
             CameraNestTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * 5f * Time.deltaTime, 0).normalized, Space.World);
             CameraNestTransform.Rotate(new Vector3(-Input.GetAxis("Mouse Y") * 0.5f * Time.deltaTime, 0, 0).normalized);
         }
-        
+
         if (TargetsList.Count > 0)
         {
+
             CurrentTarget = TargetsList[0];
             UnderAttack = true;
-            var OldSize = TargetsList.Count;
-            if (TargetsList.Count != OldSize)
+
+            if (TargetsList.Count != oldEnemies)
             {
                 StopCoroutine("UpdateCameraPosition");
                 StopCoroutine("CameraTransitionTo");
-
-                OldSize = TargetsList.Count;
             }
         }
         else
@@ -103,7 +104,7 @@ public class CameraScript : MonoBehaviour
             CameraPosition(2);
         }
     }
-    
+
     void CheckTimer()
     {
         if (Timer <= Time.time)
@@ -121,8 +122,12 @@ public class CameraScript : MonoBehaviour
                 break;
 
             case 0:
-                StartCoroutine(CameraTransitionTo(CameraTransitionSpeed));
+
+                StopCoroutine("UpdateCameraPosition");
+                StopCoroutine("FightCameraMode_Switch");
+                StartCoroutine(CameraTransitionToNormal(CameraTransitionSpeed));
                 CurrentTarget = null;
+
                 Debug.Log("NormalCameraMode_ON");
                 CurrentCameraMode = "Normal";
                 break;
@@ -155,6 +160,7 @@ public class CameraScript : MonoBehaviour
             if (TargetsList.Contains(other.transform) == false)
             {
                 TargetsList.Add(other.transform);
+                oldEnemies++;
             }
         }
     }
@@ -169,21 +175,22 @@ public class CameraScript : MonoBehaviour
             {
                 Timer = Time.time + FleeDuration;
                 CheckTimerTrigger = true;
+                oldEnemies--;
             }
         }
     }
 
-    IEnumerator CameraTransitionTo(float time)
+    IEnumerator CameraTransitionToNormal(float time)
     {
         float elapsedTime = 0;
 
         Vector3 StartingCameraPosition = PlayerCamera.transform.position;
-        
+
         while (elapsedTime < time)
         {
             ReadyToUpdate = false;
             PlayerCamera.transform.position = Vector3.Lerp(StartingCameraPosition, CameraNormalPos.position, elapsedTime / time);
-            
+
             elapsedTime += Time.deltaTime;
 
             yield return null;
@@ -204,7 +211,7 @@ public class CameraScript : MonoBehaviour
             PlayerCamera.transform.position = Vector3.Lerp(StartingCameraPosition, CameraAttackPos.position, elapsedTime / time);
 
             elapsedTime += Time.deltaTime;
-            
+
             yield return null;
         }
         ReadyToUpdate = true;
@@ -215,9 +222,9 @@ public class CameraScript : MonoBehaviour
         float elapsedTime = 0;
         var OldNestPos = CameraNestTransform.position;
         ReadyToUpdate = false;
-        while (elapsedTime < 0.3f)
+        while (elapsedTime < 0.1f)
         {
-            CameraNestTransform.transform.position = Vector3.Lerp(OldNestPos, NewNestPos, elapsedTime / 0.3f);
+            CameraNestTransform.transform.position = Vector3.Lerp(OldNestPos, NewNestPos, elapsedTime / 0.1f);
 
             elapsedTime += Time.deltaTime;
             yield return null;
@@ -232,9 +239,12 @@ public class CameraScript : MonoBehaviour
         foreach (Transform Target in Targets)
         {
             AveragePoint += Target.position;
+
         }
         AveragePoint += GetComponentInParent<Transform>().position;
-        result = AveragePoint / (Targets.Count + 1);
+        AveragePoint += Camera.main.transform.position;
+        result = AveragePoint / (Targets.Count + 2);
+
         return result;
     }
 }

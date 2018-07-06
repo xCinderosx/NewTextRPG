@@ -28,12 +28,30 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             if (target != null)
                 agent.SetDestination(target.position);
 
-            if (agent.remainingDistance > agent.stoppingDistance)
-                character.Move(agent.desiredVelocity, false, false);
-            else
-                character.Move(Vector3.zero, false, false);
+            if (agent.remainingDistance < 22)
+            {
+                if (agent.remainingDistance > agent.stoppingDistance)
+                    character.Move(agent.desiredVelocity, false, false);
+                else
+                    character.Move(Vector3.zero, false, false);
+            }
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.tag == "Player")
+            {
+                target = other.transform;
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.tag == "Player")
+            {
+                target = agent.transform;
+            }
+        }
 
         public void SetTarget(Transform target)
         {
