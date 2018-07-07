@@ -5,9 +5,19 @@ using UnityEngine;
 public class Rotator : MonoBehaviour
 {
     public float speed = 10f;
+    public bool Clockwise;
     
     void Update()
     {
-        transform.Rotate(Vector3.up, speed * Time.deltaTime);
+        if (Clockwise)
+        {
+
+            transform.Rotate(Vector3.up, speed * Time.deltaTime);
+        }
+        else
+        {
+            transform.Rotate(-Vector3.up, speed * Time.deltaTime);
+        }
     }
 }
+
