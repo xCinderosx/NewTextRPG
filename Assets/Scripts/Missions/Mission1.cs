@@ -9,8 +9,14 @@ public class Mission1 : MonoBehaviour {
     float time1, curtime;
     [SerializeField] public int timeleft;
     public Canvas missionTEXT;
-    Text timer;
+    Text timer, countdown;
+    public CameraScript CameraTransform;
 
+
+    private void Awake()
+    {
+        StartCoroutine("ShowObjective");
+    }
     // Use this for initialization
     void Start() {
         missionTEXT.enabled = true;
@@ -18,7 +24,8 @@ public class Mission1 : MonoBehaviour {
         time1 = Time.time + 10;
         Time.timeScale = 0;
         timer = GameObject.FindGameObjectWithTag("Timer").GetComponent<Text>();
-        StartCoroutine("ShowObjective");
+        countdown = GameObject.FindGameObjectWithTag("TimerCountdown").GetComponent<Text>();
+        
         StartCoroutine("ShowTimeLeft");
     }
 
@@ -29,14 +36,17 @@ public class Mission1 : MonoBehaviour {
 
     IEnumerator ShowObjective()
     {
-        var timertime = 10;
-        while (timertime > 0)
+        var timertime = 15;
+        while (timertime > 1)
         {
             Debug.Log(timertime);
             yield return new WaitForSecondsRealtime(1);
             // Decrease the timer
+            countdown.text = ((timertime-5).ToString());
             timertime--;
         }
+        CameraTransform.StartCoroutine(CameraTransform.CameraTransitionToNormal(3f));
+        countdown.enabled = false;
         missionTEXT.enabled = false;
         Time.timeScale = 1;
     }
@@ -71,7 +81,7 @@ public class Mission1 : MonoBehaviour {
     }
     public void Fail()
     {
-        missionTEXT.GetComponentInChildren<Text>().text = "You lose!";
+        missionTEXT.GetComponentInChildren<Text>().text = "You waste exacly " + (180 - timeleft) + " of my seconds!";
         missionTEXT.enabled = true;
 
         Time.timeScale = 0;
@@ -79,7 +89,7 @@ public class Mission1 : MonoBehaviour {
 
     public void Win()
     {
-        missionTEXT.GetComponentInChildren<Text>().text = "Congratulations! \nYou won in " + (180 - timeleft) + " seconds!";
+        missionTEXT.GetComponentInChildren<Text>().text = "Good job! \nYou made it in " + (180 - timeleft) + " seconds.";
         missionTEXT.enabled = true;
 
         Time.timeScale = 0;

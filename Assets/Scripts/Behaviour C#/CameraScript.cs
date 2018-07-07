@@ -33,6 +33,7 @@ public class CameraScript : MonoBehaviour
 
     void Start()
     {
+        
         mission = GameObject.FindGameObjectWithTag("MissionCanvas").GetComponent<Mission1>();
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         CameraTransitionSpeed = 0.2f;
@@ -189,7 +190,7 @@ public class CameraScript : MonoBehaviour
         }
     }
 
-    IEnumerator CameraTransitionToNormal(float time)
+    public IEnumerator CameraTransitionToNormal(float time)
     {
         float elapsedTime = 0;
 

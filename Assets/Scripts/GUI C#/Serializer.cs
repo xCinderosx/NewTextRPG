@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 
-public class Serializer : MonoBehaviour {
+public class Serializer : MonoBehaviour
+{
 
     static string SAVE_FILE = "SAVE_" + SaveCount + "_" + System.DateTime.Now.Day + System.DateTime.Now.Month + System.DateTime.Now.Year + "_" + System.DateTime.Now.Hour + "_" + System.DateTime.Now.Minute + ".json";
 
@@ -18,6 +19,8 @@ public class Serializer : MonoBehaviour {
     public Button Menu3Button;
     public Button Menu4Button;
     public Button Menu5Button;
+
+    public Image loadingPanel;
 
     public string filename;
     static int SaveCount = 1;
@@ -58,20 +61,16 @@ public class Serializer : MonoBehaviour {
         if (!NameSelector(filename))
         {
             try
-            { 
+            {
                 File.WriteAllText(filename, json);
             }
             catch (DirectoryNotFoundException dirEx)
             {
-                // Let the user know that the directory did not exist.
                 Debug.Log("Directory not found: " + dirEx.Message);
-            }            
+            }
             Debug.Log("Saved file to: " + filename);
             SaveCount = 0;
         }
-
-
-
     }
 
     public void CloseLoad()
@@ -82,9 +81,12 @@ public class Serializer : MonoBehaviour {
         Menu4Button.interactable = true;
         Menu5Button.interactable = true;
 
+
+        loadingPanel.fillCenter = false;
         Menu5Button.interactable = false;
         SavesDropdown.interactable = false;
         SavesButton.interactable = false;
+
     }
 
     public void OpenLoad()
@@ -93,7 +95,6 @@ public class Serializer : MonoBehaviour {
         Menu2Button.interactable = false;
         Menu3Button.interactable = false;
         Menu4Button.interactable = false;
-        
 
         SavesDropdown.ClearOptions();
         SavesDropdown.RefreshShownValue();
@@ -108,12 +109,13 @@ public class Serializer : MonoBehaviour {
         }
 
         SavesDropdown.RefreshShownValue();
+        loadingPanel.fillCenter = true;
         Menu5Button.interactable = true;
         SavesDropdown.interactable = true;
         SavesButton.interactable = true;
     }
-	
-	public void Load(string SaveFile)
+
+    public void Load(string SaveFile)
     {
         SaveFile = Path.Combine(Application.persistentDataPath, SavesDropdown.captionText.text);
         Debug.Log(SaveFile);
@@ -126,6 +128,6 @@ public class Serializer : MonoBehaviour {
         PlayerCharacter.transform.rotation = CopyToLoad.rotation;
         mission.timeleft = CopyToLoad.MissionTime;
 
-	}
+    }
 
 }
