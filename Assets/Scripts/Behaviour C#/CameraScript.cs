@@ -7,6 +7,7 @@ public class CameraScript : MonoBehaviour
     public GameObject PlayerCamera;
     public Transform CameraNestTransform, CameraNormalPos, CameraAttackPos, CurrentTarget;
     public Collider CameraCollider;
+    public Mission1 mission;
     private Ray ray;
     Vector3 Rayhit;
     [SerializeField] private Vector3 OldCameraRotation, OldCameraNestTransformRotation;
@@ -32,6 +33,7 @@ public class CameraScript : MonoBehaviour
 
     void Start()
     {
+        mission = GameObject.FindGameObjectWithTag("MissionCanvas").GetComponent<Mission1>();
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         CameraTransitionSpeed = 0.2f;
         Rayhit = PlayerCamera.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(0.5f, 0.5f, PlayerCamera.GetComponent<Camera>().nearClipPlane));
@@ -71,14 +73,14 @@ public class CameraScript : MonoBehaviour
 
             if (TargetsList.Count != oldEnemies)
             {
-                StopCoroutine("UpdateCameraPosition");
-                StopCoroutine("CameraTransitionTo");
+                StopCoroutine("UpdateCameraPositionTo");
+                StopCoroutine("CameraTransitionToNormal");
             }
         }
         else
         {
             StopCoroutine("CameraCombatTransitionTo");
-            StopCoroutine("UpdateCameraPosition");
+            StopCoroutine("UpdateCameraPositionTo");
         }
 
         if (CheckTimerTrigger)
@@ -95,7 +97,7 @@ public class CameraScript : MonoBehaviour
             CameraPosition(0);
         }
 
-        if (UnderAttack && CurrentCameraMode != "Fight")
+        if (UnderAttack && CurrentCameraMode == "Normal")
         {
             CameraPosition(1);
         }
@@ -123,8 +125,8 @@ public class CameraScript : MonoBehaviour
 
             case 0:
 
-                StopCoroutine("UpdateCameraPosition");
-                StopCoroutine("FightCameraMode_Switch");
+                StopCoroutine("UpdateCameraPositionTo");
+                StopCoroutine("CameraCombatTransitionTo");
                 StartCoroutine(CameraTransitionToNormal(CameraTransitionSpeed));
                 CurrentTarget = null;
 
@@ -133,6 +135,8 @@ public class CameraScript : MonoBehaviour
                 break;
 
             case 1:
+                StopCoroutine("UpdateCameraPositionTo");
+                StopCoroutine("CameraCombatTransitionTo");
                 StartCoroutine(CameraCombatTransitionTo(CameraTransitionSpeed));
                 Debug.Log("FightCameraMode_Switch");
                 CurrentCameraMode = "Fight";
@@ -163,6 +167,11 @@ public class CameraScript : MonoBehaviour
                 oldEnemies++;
             }
         }
+
+        if (other.tag == "WinCondition")
+        {
+            mission.Win();
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -188,7 +197,6 @@ public class CameraScript : MonoBehaviour
 
         while (elapsedTime < time)
         {
-            ReadyToUpdate = false;
             PlayerCamera.transform.position = Vector3.Lerp(StartingCameraPosition, CameraNormalPos.position, elapsedTime / time);
 
             elapsedTime += Time.deltaTime;
@@ -214,16 +222,18 @@ public class CameraScript : MonoBehaviour
 
             yield return null;
         }
+
         ReadyToUpdate = true;
     }
 
     IEnumerator UpdateCameraPositionTo(Vector3 NewNestPos)
     {
+
         float elapsedTime = 0;
         var OldNestPos = CameraNestTransform.position;
-        ReadyToUpdate = false;
         while (elapsedTime < 0.1f)
         {
+            ReadyToUpdate = false;
             CameraNestTransform.transform.position = Vector3.Lerp(OldNestPos, NewNestPos, elapsedTime / 0.1f);
 
             elapsedTime += Time.deltaTime;

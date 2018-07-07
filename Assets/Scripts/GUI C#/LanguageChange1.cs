@@ -9,17 +9,7 @@ public class LanguageChange1 : MonoBehaviour {
     public LanguagesTexts CurrentLanguageMENU, DefaultLanguage;
 
     public List<Text> textsList;
-
-    public Canvas canvasOptions;
     
-
-    public Button NewGamebutton;
-    public Button Optionbutton;
-    public Button Exitbutton;
-
-    public Button ContinueButton;
-    public Button Savebutton;
-    public Button Loadbutton;
 
     private void Awake()
     {
@@ -39,8 +29,8 @@ public class LanguageChange1 : MonoBehaviour {
 
     public void ChangeLanguage()
     {
-        textsList[0].text = CurrentLanguageMENU.LocalizationTexts[6];
-        textsList[1].text = CurrentLanguageMENU.LocalizationTexts[0];
+        textsList[0].text = CurrentLanguageMENU.LocalizationTexts[10];
+        textsList[1].text = CurrentLanguageMENU.LocalizationTexts[5];
         textsList[2].text = CurrentLanguageMENU.LocalizationTexts[1];
         textsList[3].text = CurrentLanguageMENU.LocalizationTexts[2];
         textsList[4].text = CurrentLanguageMENU.LocalizationTexts[7];

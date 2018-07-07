@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Enemy
   - Ground
+  - Timer
+  - MissionCanvas
+  - WinCondition
   layers:
   - Default
   - TransparentFX

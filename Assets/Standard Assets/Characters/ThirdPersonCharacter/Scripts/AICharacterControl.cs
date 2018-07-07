@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace UnityStandardAssets.Characters.ThirdPerson
 {
-    [RequireComponent(typeof (UnityEngine.AI.NavMeshAgent))]
+    [RequireComponent(typeof (NavMeshAgent))]
     [RequireComponent(typeof (ThirdPersonCharacter))]
     public class AICharacterControl : MonoBehaviour
     {
-        public UnityEngine.AI.NavMeshAgent agent { get; private set; }             // the navmesh agent required for the path finding
+        public NavMeshAgent agent { get; private set; }             // the navmesh agent required for the path finding
         public ThirdPersonCharacter character { get; private set; } // the character we are controlling
         public Transform target;                                    // target to aim for
 
@@ -15,7 +16,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private void Start()
         {
             // get the components on the object we need ( should not be null due to require component so no need to check )
-            agent = GetComponentInChildren<UnityEngine.AI.NavMeshAgent>();
+            agent = GetComponentInChildren<NavMeshAgent>();
             character = GetComponent<ThirdPersonCharacter>();
 
 	        agent.updateRotation = false;
@@ -26,14 +27,16 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private void Update()
         {
             if (target != null)
+            {
                 agent.SetDestination(target.position);
+            }
 
-            if (agent.remainingDistance < 22)
+            if (agent.remainingDistance < 15)
             {
                 if (agent.remainingDistance > agent.stoppingDistance)
                     character.Move(agent.desiredVelocity, false, false);
                 else
-                    character.Move(Vector3.zero, false, false);
+                    Attack();
             }
         }
 
@@ -41,7 +44,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         {
             if (other.tag == "Player")
             {
-                target = other.transform;
+                SetTarget(other.transform);
             }
         }
 
@@ -49,13 +52,19 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         {
             if (other.tag == "Player")
             {
-                target = agent.transform;
+                target = null;
             }
         }
 
         public void SetTarget(Transform target)
         {
             this.target = target;
+        }
+        
+        private void Attack()
+        {
+            character.Move(Vector3.zero, false, false);
+            character.transform.LookAt(target);
         }
     }
 }

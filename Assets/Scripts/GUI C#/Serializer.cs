@@ -6,9 +6,10 @@ using System.IO;
 
 public class Serializer : MonoBehaviour {
 
-    static string SAVE_FILE = "SAVE_1.json";
+    static string SAVE_FILE = "SAVE_" + SaveCount + "_" + System.DateTime.Now.Day + System.DateTime.Now.Month + System.DateTime.Now.Year + "_" + System.DateTime.Now.Hour + "_" + System.DateTime.Now.Minute + ".json";
 
     public GameObject PlayerCharacter;
+    public Mission1 mission;
 
     public Dropdown SavesDropdown;
     public Button SavesButton;
@@ -29,36 +30,46 @@ public class Serializer : MonoBehaviour {
         if (File.Exists(Text))
         {
             SaveCount++;
-            SAVE_FILE = "SAVE_" + SaveCount + "_" + System.DateTime.Now.Date.ToShortDateString() + "_" + System.DateTime.Now.Hour + ":" + System.DateTime.Now.Minute + ".json";
+            SAVE_FILE = "SAVE_" + SaveCount + "_" + System.DateTime.Now.Day + System.DateTime.Now.Month + System.DateTime.Now.Year + "_" + System.DateTime.Now.Hour + "_" + System.DateTime.Now.Minute + ".json";
             return true;
         }
-        else { return true; }
+        else { return false; }
     }
 
     private void Start()
     {
-
-
+        mission = GameObject.FindGameObjectWithTag("MissionCanvas").GetComponent<Mission1>();
     }
 
     public void Save()
     {
         SaveData data = new SaveData()
-        { PlayerLanguage = LanguageChange.CurrentLanguage,
+        {
+            PlayerLanguage = LanguageChange.CurrentLanguage,
             postion = PlayerCharacter.transform.position,
-            rotation = PlayerCharacter.transform.rotation
+            rotation = PlayerCharacter.transform.rotation,
+            MissionTime = mission.timeleft
         };
 
         string json = JsonUtility.ToJson(data);
 
         filename = Path.Combine(Application.persistentDataPath, SAVE_FILE);
 
-        if (NameSelector(filename))
+        if (!NameSelector(filename))
         {
-            File.WriteAllText(filename, json);
+            try
+            { 
+                File.WriteAllText(filename, json);
+            }
+            catch (DirectoryNotFoundException dirEx)
+            {
+                // Let the user know that the directory did not exist.
+                Debug.Log("Directory not found: " + dirEx.Message);
+            }            
+            Debug.Log("Saved file to: " + filename);
+            SaveCount = 0;
         }
 
-        Debug.Log(File.Exists(filename));
 
 
     }
@@ -84,8 +95,6 @@ public class Serializer : MonoBehaviour {
         Menu4Button.interactable = false;
         
 
-
-
         SavesDropdown.ClearOptions();
         SavesDropdown.RefreshShownValue();
         var info = new DirectoryInfo(Application.persistentDataPath);
@@ -106,8 +115,8 @@ public class Serializer : MonoBehaviour {
 	
 	public void Load(string SaveFile)
     {
-
-
+        SaveFile = Path.Combine(Application.persistentDataPath, SavesDropdown.captionText.text);
+        Debug.Log(SaveFile);
         string jsonFromFile = File.ReadAllText(SaveFile);
         SaveData CopyToLoad = JsonUtility.FromJson<SaveData>(jsonFromFile);
 
@@ -115,6 +124,7 @@ public class Serializer : MonoBehaviour {
         LanguageChange.CurrentLanguage = CopyToLoad.PlayerLanguage;
         PlayerCharacter.transform.position = CopyToLoad.postion;
         PlayerCharacter.transform.rotation = CopyToLoad.rotation;
+        mission.timeleft = CopyToLoad.MissionTime;
 
 	}
 

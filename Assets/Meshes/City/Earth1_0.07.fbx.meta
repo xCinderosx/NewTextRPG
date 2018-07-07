@@ -63,7 +63,12 @@ ModelImporter:
     4300016: CylindricAdd
     4300018: CylinderRotator
     4300020: Ground200m2.001
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: e70a5920381f69445818bf5f6770da4a, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
