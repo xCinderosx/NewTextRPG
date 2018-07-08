@@ -86,7 +86,7 @@ public class Mission1 : MonoBehaviour {
     }
     public void Fail()
     {
-        briefing.text = Localization.CurrentLanguageMENU.LocalizationTexts[14].Replace("\\n", "\n");
+        briefing.text = Localization.CurrentLanguageMENU.LocalizationTexts[15].Replace("\\n", "\n");
         missionTEXT.enabled = true;
 
         Time.timeScale = 0;
@@ -94,7 +94,7 @@ public class Mission1 : MonoBehaviour {
 
     public void Win()
     {
-        var winText = Localization.CurrentLanguageMENU.LocalizationTexts[13].Replace("\\n", "\n") + (180 - timeleft) + Localization.CurrentLanguageMENU.LocalizationTexts[14].Replace("\\n", "\n");
+        var winText = Localization.CurrentLanguageMENU.LocalizationTexts[13].Replace("\\n", "\n") + (120 - timeleft) + Localization.CurrentLanguageMENU.LocalizationTexts[14].Replace("\\n", "\n");
         briefing.text = winText;
         missionTEXT.enabled = true;
 

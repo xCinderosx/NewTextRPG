@@ -18,7 +18,7 @@ public class CameraScript : MonoBehaviour
     [SerializeField] private bool ReadyToUpdate = true;
     [SerializeField] private float FleeDuration = 0.5f;
     private int oldEnemies;
-
+    private bool FirstShow = true;
     float Timer;
 
     private void OnGUI()
@@ -200,13 +200,35 @@ public class CameraScript : MonoBehaviour
         {
             PlayerCamera.transform.position = Vector3.Lerp(StartingCameraPosition, CameraNormalPos.position, elapsedTime / time);
 
+            if (FirstShow)
+            {
+                StartCoroutine(FirstRotation(time));
+                FirstShow = false;
+            }
+
             elapsedTime += Time.deltaTime;
 
             yield return null;
         }
     }
 
-    IEnumerator CameraCombatTransitionTo(float time)
+    IEnumerator FirstRotation(float time)
+    {
+        float elapsedTime = 0;
+
+        Quaternion StartingCameraPosition = PlayerCamera.transform.rotation;
+
+        while (elapsedTime < time)
+        {
+            PlayerCamera.transform.rotation = Quaternion.Lerp(StartingCameraPosition, CameraNormalPos.rotation, elapsedTime / time);
+
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+    }
+
+        IEnumerator CameraCombatTransitionTo(float time)
     {
         float elapsedTime = 0;
         Vector3 StartingCameraPosition = PlayerCamera.transform.position;
