@@ -24,4 +24,10 @@ MonoBehaviour:
   - Load Game
   - Save Game
   - Load
-  - Move with [W][S][A][D] Jump with [Spacebar] Pause with [Esc]
+  - Move with [W][S][A][D] \nJump with [Spacebar] \nPause with [Esc] \nMove camera
+    [RMB]
+  - Get to extraction point in the center of city.\nYou have 2 minutes.\nDont get
+    cought by hostile robots.\nDon't waste my time!
+  - 'Good job! \nYou''ve made it in '
+  - ' seconds!'
+  - And you waste exacly 120 of my seconds...

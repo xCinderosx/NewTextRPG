@@ -12,6 +12,8 @@ public class Mission1 : MonoBehaviour {
     Text timer, countdown;
     public CameraScript CameraTransform;
     public bool brief = true;
+    public LanguageChange1 Localization;
+    private Text briefing;
 
 
     private void Awake()
@@ -21,7 +23,8 @@ public class Mission1 : MonoBehaviour {
     // Use this for initialization
     void Start() {
         missionTEXT.enabled = true;
-
+        briefing = GameObject.FindGameObjectWithTag("MissionBrief").GetComponent<Text>();
+        briefing.text = Localization.CurrentLanguageMENU.LocalizationTexts[12].Replace("\\n", "\n");
         time1 = Time.time + 10;
         Time.timeScale = 0;
         timer = GameObject.FindGameObjectWithTag("Timer").GetComponent<Text>();
@@ -55,7 +58,7 @@ public class Mission1 : MonoBehaviour {
 
     IEnumerator ShowTimeLeft()
     {
-        timeleft = 180;
+        timeleft = 120;
         while (timeleft > 0)
         {
             var minutes = timeleft / 60;
@@ -83,7 +86,7 @@ public class Mission1 : MonoBehaviour {
     }
     public void Fail()
     {
-        missionTEXT.GetComponentInChildren<Text>().text = "You waste exacly " + (180 - timeleft) + " of my seconds!";
+        briefing.text = Localization.CurrentLanguageMENU.LocalizationTexts[14].Replace("\\n", "\n");
         missionTEXT.enabled = true;
 
         Time.timeScale = 0;
@@ -91,7 +94,8 @@ public class Mission1 : MonoBehaviour {
 
     public void Win()
     {
-        missionTEXT.GetComponentInChildren<Text>().text = "Good job! \nYou made it in " + (180 - timeleft) + " seconds.";
+        var winText = Localization.CurrentLanguageMENU.LocalizationTexts[13].Replace("\\n", "\n") + (180 - timeleft) + Localization.CurrentLanguageMENU.LocalizationTexts[14].Replace("\\n", "\n");
+        briefing.text = winText;
         missionTEXT.enabled = true;
 
         Time.timeScale = 0;

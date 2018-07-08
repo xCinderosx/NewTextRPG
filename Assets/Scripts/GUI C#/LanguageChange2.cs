@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
 
 public class LanguageChange2 : MonoBehaviour {
-    
-    public LanguagesTexts CurrentLanguageMENU, DefaultLanguage;
+
+    [TextArea] public LanguagesTexts CurrentLanguageMENU, DefaultLanguage;
 
     public List<Text> textsList;
     
@@ -25,16 +26,17 @@ public class LanguageChange2 : MonoBehaviour {
     // Use this for initialization
     void Start () {
         ChangeLanguage();
+        
     }
 
     public void ChangeLanguage()
     {
-        textsList[0].text = CurrentLanguageMENU.LocalizationTexts[6];
-        textsList[1].text = CurrentLanguageMENU.LocalizationTexts[0];
-        textsList[2].text = CurrentLanguageMENU.LocalizationTexts[8];
-        textsList[3].text = CurrentLanguageMENU.LocalizationTexts[1];
-        textsList[4].text = CurrentLanguageMENU.LocalizationTexts[2];
-        textsList[5].text = CurrentLanguageMENU.LocalizationTexts[11];
+        textsList[0].text = CurrentLanguageMENU.LocalizationTexts[6].Replace("\\n", "\n");
+        textsList[1].text = CurrentLanguageMENU.LocalizationTexts[0].Replace("\\n", "\n");
+        textsList[2].text = CurrentLanguageMENU.LocalizationTexts[8].Replace("\\n", "\n");
+        textsList[3].text = CurrentLanguageMENU.LocalizationTexts[1].Replace("\\n", "\n");
+        textsList[4].text = CurrentLanguageMENU.LocalizationTexts[2].Replace("\\n", "\n");
+        textsList[5].text = CurrentLanguageMENU.LocalizationTexts[11].Replace("\\n", "\n");
     }
     
 

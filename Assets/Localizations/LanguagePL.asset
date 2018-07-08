@@ -24,4 +24,11 @@ MonoBehaviour:
   - "Wczytaj Gr\u0119"
   - "Zapisz Gr\u0119"
   - Wczytaj
-  - "Poruszaj si\u0119 [W][S][A][D] Skacz [Spacj\u0105] Pauzuj [Esc]"
+  - "Poruszaj si\u0119 [W][S][A][D] \\nSkacz [Spacj\u0105] \\nPauzuj [Esc] \\nObracaj
+    kamer\u0105 [PPM]"
+  - "Dosta\u0144 si\u0119 do punktu ewakuacji w centrum miasta.\\nMasz 2 minuty.\\nNie
+    daj si\u0119 z\u0142apa\u0107 wrogim robotom. \\nI nie marnuj ju\u017C mojego
+    czasu!"
+  - "Dobra robota! \\nUda\u0142o ci si\u0119 w dok\u0142adnie "
+  - ' sekund!'
+  - "W\u0142a\u015Bnie zmarnowa\u0142e\u015B moje 120 sekund..."
