@@ -6,17 +6,19 @@ using System.Linq;
 
 public class LanguageChange2 : MonoBehaviour {
     
-    public LanguagesTexts CurrentLanguageMENU;
+    public LanguagesTexts CurrentLanguageMENU, DefaultLanguage;
 
     public List<Text> textsList;
-
-    public Button ContinueButton;
-    public Button Savebutton;
-    public Button Loadbutton;
-    public Button Exitbutton;
     
+
     private void Awake()
     {
+        if (LanguageChange.CurrentLanguage == null)
+        {
+            LanguageChange.CurrentLanguage = DefaultLanguage;
+        }
+        CurrentLanguageMENU = LanguageChange.CurrentLanguage;
+        
         
     }
 
@@ -29,8 +31,10 @@ public class LanguageChange2 : MonoBehaviour {
     {
         textsList[0].text = CurrentLanguageMENU.LocalizationTexts[6];
         textsList[1].text = CurrentLanguageMENU.LocalizationTexts[0];
-        textsList[2].text = CurrentLanguageMENU.LocalizationTexts[1];
-        textsList[3].text = CurrentLanguageMENU.LocalizationTexts[2];
+        textsList[2].text = CurrentLanguageMENU.LocalizationTexts[8];
+        textsList[3].text = CurrentLanguageMENU.LocalizationTexts[1];
+        textsList[4].text = CurrentLanguageMENU.LocalizationTexts[2];
+        textsList[5].text = CurrentLanguageMENU.LocalizationTexts[11];
     }
     
 

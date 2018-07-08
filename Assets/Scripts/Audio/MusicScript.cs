@@ -18,56 +18,64 @@ public class MusicScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log(cameraScript.UnderAttack);
-		if (SceneManager.GetSceneByName("OptionsScene").isLoaded && !normalMusicIsPlaying)
+        try
         {
-            normalMusicIsPlaying = true;
-            cameraAudioSource.clip = songs[0];
-            cameraAudioSource.loop = true;
-            cameraAudioSource.Play(0);
-        }
-        else if (SceneManager.GetSceneByName("Scene One").isLoaded)
-        {
-            if (Menu.pause && !menuMusicIsPlaying)
+            if (SceneManager.GetSceneByName("OptionsScene").isLoaded && !normalMusicIsPlaying)
             {
-                menuMusicIsPlaying = true;
-                attackMusicIsPlaying = false;
-                normalMusicIsPlaying = false;
-                cameraAudioSource.loop = true;
-                cameraAudioSource.clip = songs[0];
-                cameraAudioSource.Play(0);
-            }      
-            if (!briefMusicPlayed && !Menu.pause)
-            {
-                cameraAudioSource.volume = 0.06f;
-                briefMusicPlayed = true;
-                cameraAudioSource.loop = false;
-                cameraAudioSource.clip = songs[1];
-                cameraAudioSource.Play(0);
-            }
-            if (!cameraScript.UnderAttack && !normalMusicIsPlaying && !mission.brief && !Menu.pause)
-            {
-                cameraAudioSource.volume = 0.01f;
-                cameraAudioSource.loop = true;
-                attackMusicIsPlaying = false;
-                menuMusicIsPlaying = false;
                 normalMusicIsPlaying = true;
-                cameraAudioSource.clip = songs[3];
-                cameraAudioSource.Play(0);
-            }else 
-            if (cameraScript.UnderAttack && !attackMusicIsPlaying && !mission.brief && !Menu.pause)
-            {
-                Debug.Log("Atakuj");
-                cameraAudioSource.volume = 0.03f;
+                cameraAudioSource.clip = songs[0];
                 cameraAudioSource.loop = true;
-                attackMusicIsPlaying = true;
-                menuMusicIsPlaying = false;
-                normalMusicIsPlaying = false;
-                cameraAudioSource.clip = songs[2];
                 cameraAudioSource.Play(0);
             }
+            else if (SceneManager.GetSceneByName("Scene One").isLoaded)
+            {
+                if (Menu.pause && !menuMusicIsPlaying)
+                {
+                    menuMusicIsPlaying = true;
+                    attackMusicIsPlaying = false;
+                    normalMusicIsPlaying = false;
+                    cameraAudioSource.loop = true;
+                    cameraAudioSource.clip = songs[0];
+                    cameraAudioSource.Play(0);
+                }
+                if (!briefMusicPlayed && !Menu.pause)
+                {
+                    cameraAudioSource.volume = 0.06f;
+                    briefMusicPlayed = true;
+                    cameraAudioSource.loop = false;
+                    cameraAudioSource.clip = songs[1];
+                    cameraAudioSource.Play(0);
+                }
+                if (!cameraScript.UnderAttack && !normalMusicIsPlaying && !mission.brief && !Menu.pause)
+                {
+                    cameraAudioSource.volume = 0.01f;
+                    cameraAudioSource.loop = true;
+                    attackMusicIsPlaying = false;
+                    menuMusicIsPlaying = false;
+                    normalMusicIsPlaying = true;
+                    cameraAudioSource.clip = songs[3];
+                    cameraAudioSource.Play(0);
+                }
+                else
+                if (cameraScript.UnderAttack && !attackMusicIsPlaying && !mission.brief && !Menu.pause)
+                {
+                    cameraAudioSource.volume = 0.03f;
+                    cameraAudioSource.loop = true;
+                    attackMusicIsPlaying = true;
+                    menuMusicIsPlaying = false;
+                    normalMusicIsPlaying = false;
+                    cameraAudioSource.clip = songs[2];
+                    cameraAudioSource.Play(0);
+                }
 
 
+            }
         }
+        catch (System.Exception)
+        {
+
+            throw;
+        }
+		
 	}
 }

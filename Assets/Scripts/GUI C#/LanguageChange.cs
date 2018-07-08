@@ -48,15 +48,14 @@ public class LanguageChange : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        canvasMainMenu.GetComponent<LanguageChange1>().CurrentLanguageMENU = CurrentLanguage;
-
+        canvasMainMenu.GetComponent<LanguageChange2>().CurrentLanguageMENU = CurrentLanguage;
     }
 
     public void ChangeLanguage()
     {
         CurrentLanguage = LanguageList[LanguageMenu.value];
-        canvasMainMenu.GetComponent<LanguageChange1>().CurrentLanguageMENU = CurrentLanguage;
-        canvasMainMenu.GetComponent<LanguageChange1>().ChangeLanguage();
+        canvasMainMenu.GetComponent<LanguageChange2>().CurrentLanguageMENU = CurrentLanguage;
+        canvasMainMenu.GetComponent<LanguageChange2>().ChangeLanguage();
         textsList[0].text = CurrentLanguage.LocalizationTexts[6];
         textsList[1].text = CurrentLanguage.LocalizationTexts[5];
         textsList[2].text = CurrentLanguage.LocalizationTexts[4];

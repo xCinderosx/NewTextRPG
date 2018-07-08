@@ -24,3 +24,4 @@ MonoBehaviour:
   - Load Game
   - Save Game
   - Load
+  - Move with [W][S][A][D] Jump with [Spacebar] Pause with [Esc]
