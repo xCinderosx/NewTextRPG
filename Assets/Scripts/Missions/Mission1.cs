@@ -11,6 +11,7 @@ public class Mission1 : MonoBehaviour {
     public Canvas missionTEXT;
     Text timer, countdown;
     public CameraScript CameraTransform;
+    public bool brief = true;
 
 
     private void Awake()
@@ -46,6 +47,7 @@ public class Mission1 : MonoBehaviour {
             timertime--;
         }
         CameraTransform.StartCoroutine(CameraTransform.CameraTransitionToNormal(3f));
+        brief = false;
         countdown.enabled = false;
         missionTEXT.enabled = false;
         Time.timeScale = 1;

@@ -10,6 +10,7 @@ public class PopMenuScript : MonoBehaviour {
     public LanguagesTexts CurrentLanguage;
     public List<Text> textsList;
     public Serializer serializer;
+    public bool pause;
 
     // Use this for initialization
     void Start () {
@@ -31,11 +32,13 @@ public class PopMenuScript : MonoBehaviour {
             popMenuCanvas.enabled = false;
             Time.timeScale = 1;
             serializer.CloseLoad();
+            pause = false;
         }
         else if (popMenuCanvas.enabled == false)
         {
             popMenuCanvas.enabled = true;
             Time.timeScale = 0;
+            pause = true;
         }
     }
 

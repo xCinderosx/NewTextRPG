@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.AI;
 
 namespace UnityStandardAssets.Characters.ThirdPerson
@@ -8,17 +9,20 @@ namespace UnityStandardAssets.Characters.ThirdPerson
     [RequireComponent(typeof (ThirdPersonCharacter))]
     public class AICharacterControl : MonoBehaviour
     {
+
+        public AudioSource audioSource;
         public NavMeshAgent agent { get; private set; }             // the navmesh agent required for the path finding
         public ThirdPersonCharacter character { get; private set; } // the character we are controlling
         public Transform target;                                    // target to aim for
-
+        private bool playingAudio = false;
 
         private void Start()
         {
+
             // get the components on the object we need ( should not be null due to require component so no need to check )
             agent = GetComponentInChildren<NavMeshAgent>();
             character = GetComponent<ThirdPersonCharacter>();
-
+            
 	        agent.updateRotation = false;
 	        agent.updatePosition = true;
         }
@@ -29,6 +33,12 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             if (target != null)
             {
                 agent.SetDestination(target.position);
+                if (audioSource != null && !playingAudio)
+                {
+                    playingAudio = true;
+                    audioSource.Play(0);
+                }
+                
             }
 
             if (agent.remainingDistance < 15)
@@ -52,6 +62,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         {
             if (other.tag == "Player")
             {
+                audioSource.Stop();
+                playingAudio = false;
                 target = null;
             }
         }
