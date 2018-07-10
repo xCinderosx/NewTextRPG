@@ -62,7 +62,6 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         {
             if (other.tag == "Player")
             {
-                audioSource.Stop();
                 playingAudio = false;
                 target = null;
             }

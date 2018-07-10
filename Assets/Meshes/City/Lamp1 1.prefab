@@ -80,6 +80,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1905062534230022
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4654330452806578}
+  - component: {fileID: 114019691214183376}
+  m_Layer: 0
+  m_Name: Aura Cone Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4100246093457822
 Transform:
   m_ObjectHideFlags: 1
@@ -100,7 +116,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1626495207761830}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0244, y: -0.0081, z: 0.0345}
+  m_LocalPosition: {x: -0.0244, y: -0.0001, z: 0.0345}
   m_LocalScale: {x: 0.8958998, y: 0.89589965, z: 0.89589965}
   m_Children: []
   m_Father: {fileID: 4774305579244332}
@@ -119,19 +135,33 @@ Transform:
   m_Father: {fileID: 4774305579244332}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 55.38, y: -121.923004, z: 0}
+--- !u!4 &4654330452806578
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1905062534230022}
+  m_LocalRotation: {x: 0.0000011101366, y: -0.9437226, z: -0.0000001192093, w: 0.33073816}
+  m_LocalPosition: {x: -0.019000009, y: 0.00010000224, z: 0.046699997}
+  m_LocalScale: {x: 0.07199408, y: 0.074217245, z: 0.02114822}
+  m_Children: []
+  m_Father: {fileID: 4774305579244332}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: -141.373, z: 0}
 --- !u!4 &4774305579244332
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1739649354879396}
-  m_LocalRotation: {x: -0.68301797, y: -0.18299328, z: -0.18299331, w: 0.68301785}
-  m_LocalPosition: {x: 19.175587, y: 0, z: 119.157555}
-  m_LocalScale: {x: 100, y: 99.99998, z: 99.99998}
+  m_LocalRotation: {x: -0.68301797, y: -0.1829933, z: -0.18299331, w: 0.68301785}
+  m_LocalPosition: {x: 53.83, y: 0, z: 59.14}
+  m_LocalScale: {x: 100, y: 100.00005, z: 100.000046}
   m_Children:
   - {fileID: 4480261222664066}
   - {fileID: 4168143144395994}
   - {fileID: 4100246093457822}
+  - {fileID: 4654330452806578}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -268,6 +298,114 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114019691214183376
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1905062534230022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b142c931e4f39c429a012dc68ba0659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volumeShape:
+    shape: 5
+    fading:
+      falloffExponent: 10.87
+      xPositiveCubeFade: 0.25
+      xNegativeCubeFade: 0.25
+      yPositiveCubeFade: 0.25
+      yNegativeCubeFade: 0.25
+      zPositiveCubeFade: 0.25
+      zNegativeCubeFade: 0.25
+      angularConeFade: 0.23000002
+      distanceConeFade: 0.23000002
+      widthCylinderFade: 0.25
+      yNegativeCylinderFade: 0.25
+      yPositiveCylinderFade: 0.25
+      heightPlaneFade: 1
+      distanceSphereFade: 0.25
+  textureMask:
+    clipComputationBasedOnAlpha: 0
+    clippingThreshold: 0.5
+    enable: 0
+    filterMode: 2
+    texture: {fileID: 0}
+    textureIndex: -1
+    transform:
+      space: 1
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      animatePosition: 0
+      positionSpeed: {x: 0, y: 0, z: 0}
+      animateRotation: 0
+      rotationSpeed: {x: 0, y: 0, z: 0}
+    wrapMode: 2
+  noiseMask:
+    enable: 0
+    speed: 0.125
+    offset: 0
+    transform:
+      space: 0
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      animatePosition: 0
+      positionSpeed: {x: 0, y: 0, z: 0}
+      animateRotation: 0
+      rotationSpeed: {x: 0, y: 0, z: 0}
+  density:
+    injectionParameters:
+      enable: 1
+      strength: -3.08
+      textureMaskLevelParameters:
+        levelLowThreshold: 0
+        levelHiThreshold: 1
+        outputLowValue: 0
+        outputHiValue: 1
+        contrast: 1
+      noiseMaskLevelParameters:
+        levelLowThreshold: 0
+        levelHiThreshold: 1
+        outputLowValue: 0
+        outputHiValue: 1
+        contrast: 1
+  anisotropy:
+    injectionParameters:
+      enable: 0
+      strength: 0.1
+      textureMaskLevelParameters:
+        levelLowThreshold: 0
+        levelHiThreshold: 1
+        outputLowValue: 0
+        outputHiValue: 1
+        contrast: 1
+      noiseMaskLevelParameters:
+        levelLowThreshold: 0
+        levelHiThreshold: 1
+        outputLowValue: 0
+        outputHiValue: 1
+        contrast: 1
+  color:
+    injectionParameters:
+      enable: 1
+      strength: 1.74
+      textureMaskLevelParameters:
+        levelLowThreshold: 0
+        levelHiThreshold: 1
+        outputLowValue: 0
+        outputHiValue: 1
+        contrast: 1
+      noiseMaskLevelParameters:
+        levelLowThreshold: 0
+        levelHiThreshold: 1
+        outputLowValue: 0
+        outputHiValue: 1
+        contrast: 1
+    color: {r: 1, g: 0.93718874, b: 0.9639463, a: 1}
+  gizmoColor: {r: 1, g: 0, b: 0.38929844, a: 1}
 --- !u!114 &114215200268682724
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -281,10 +419,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   strength: 0.73
   overrideColor: 1
-  overridingColor: {r: 0.9999, g: 0.9999, b: 0.9999, a: 1}
+  overridingColor: {r: 0.5384451, g: 0.9999, b: 0.69044554, a: 1}
   useShadow: 1
   shadowMapRenderTexture: {fileID: 0}
-  useCookie: 1
+  useCookie: 0
   cookieMapRenderTexture: {fileID: 0}
   enableOutOfPhaseColor: 0
   outOfPhaseColorStrength: 0.1
@@ -293,7 +431,7 @@ MonoBehaviour:
     type: 3}
   shadowDataRenderTexture: {fileID: 0}
   customDistanceFalloffThreshold: 0.5
-  customDistanceFalloffPower: 3.11
+  customDistanceFalloffPower: 2
   storeDirectionalSpotLightCookieMapShader: {fileID: 4800000, guid: ffdac5434c39f7545b910c253007c8fc,
     type: 3}
   customCookieDistanceFalloffStartThreshold: 0.1
@@ -4027,7 +4165,7 @@ ParticleSystem:
         m_RotationOrder: 4
     maxLights: 20
   TrailModule:
-    enabled: 1
+    enabled: 0
     mode: 0
     ratio: 0.28
     lifetime:
